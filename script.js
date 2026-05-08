@@ -1,4 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Preloader Logic
+    const preloader = document.getElementById('preloader');
+    const loaderBar = document.querySelector('.loader-bar');
+    const loaderText = document.querySelector('.loader-text');
+    
+    if (preloader) {
+        let progress = 0;
+        
+        // Simulate tech-style loading progress
+        const interval = setInterval(() => {
+            progress += Math.random() * 20; // jump up to 20% at a time
+            
+            // Hold at 90% if the window hasn't fired the load event yet
+            if (progress > 90 && document.readyState !== 'complete') {
+                progress = 90;
+            }
+            
+            if (progress >= 100 || (document.readyState === 'complete' && progress >= 90)) {
+                progress = 100;
+                if (loaderBar) loaderBar.style.width = `${progress}%`;
+                clearInterval(interval);
+                
+                if (loaderText) {
+                    loaderText.innerText = "SYSTEMS ONLINE";
+                    loaderText.style.color = "#ffffff";
+                    loaderText.style.animation = "none";
+                }
+                
+                // Fade out after a short dramatic pause
+                setTimeout(() => {
+                    preloader.classList.add('fade-out');
+                }, 600);
+                
+                // Remove from DOM completely
+                setTimeout(() => {
+                    preloader.remove();
+                }, 1400);
+            } else {
+                if (loaderBar) loaderBar.style.width = `${progress}%`;
+            }
+        }, 120); // Fast updates for a techy feel
+        
+        // Guarantee completion if actual load fires late
+        window.addEventListener('load', () => {
+            if (progress < 100) {
+                progress = 100;
+            }
+        });
+    }
+
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
